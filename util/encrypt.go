@@ -405,7 +405,6 @@ func NewRsa2PKCS1(publicKey string, privateKey string) (*Rsa2, error) {
 	privateKey = fmt.Sprintf(`-----BEGIN RSA PRIVATE KEY-----
 %s
 -----END RSA PRIVATE KEY-----`, privateKey)
-
 	return NewRsa2PKCS1Byte([]byte(publicKey), []byte(privateKey))
 }
 func NewRsa2PKCS1Byte(publicKey []byte, privateKey []byte) (*Rsa2, error) {

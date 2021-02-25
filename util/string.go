@@ -405,3 +405,11 @@ func PuStrLen(str string) (s, c int64) {
 	s += c
 	return
 }
+func URLParamsToMap(params string) map[string]string {
+	m := make(map[string]string)
+	up, _ := url.Parse(fmt.Sprintf(`http://s.c?%s`, params))
+	for k, v := range up.Query() {
+		m[k] = v[0]
+	}
+	return m
+}

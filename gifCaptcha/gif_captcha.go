@@ -3,6 +3,7 @@ package gifCaptcha
 import (
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
+	"github.com/ooncn/common/util"
 	"image"
 	"image/color"
 	"image/color/palette"

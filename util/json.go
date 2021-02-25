@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"regexp"
 )
 
 /**
@@ -60,4 +61,19 @@ func JsonToMap(i string) map[string]interface{} {
 	m := make(map[string]interface{})
 	JsonToType(i, &m)
 	return m
+}
+func JsonClear(str string) (string, error) {
+	var m interface{}
+	err := JsonToType(str, &m)
+	if err != nil {
+		return str, err
+	}
+	str = JsonToStr(m)
+	reg := regexp.MustCompile(`"[^"]*":("",|null,)`)
+	str = reg.ReplaceAllString(str, ``)
+	reg = regexp.MustCompile(`"[^"]*":(""|null)`)
+	str = reg.ReplaceAllString(str, ``)
+	reg = regexp.MustCompile(`,(})`)
+	str = reg.ReplaceAllString(str, `${1}`)
+	return str, err
 }
