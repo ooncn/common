@@ -1,12 +1,26 @@
 package wechat
 
 import (
+	"crypto/sha1"
 	"errors"
 	"fmt"
+	"github.com/ooncn/common/constant"
+	"github.com/ooncn/common/oredis"
+	"github.com/ooncn/common/util"
+	"io"
 	"net/url"
+	"sort"
 	"strings"
 	"time"
 )
+
+func MakeSignature(token, timestamp, nonce string) string {
+	sl := []string{token, timestamp, nonce}
+	sort.Strings(sl)
+	s := sha1.New()
+	io.WriteString(s, strings.Join(sl, ""))
+	return fmt.Sprintf("%x", s.Sum(nil))
+}
 
 type WxToken struct {
 	MqAppID         string `json:"mq_app_id" gorm:"primary_key;size:33"`      //MqAppID
@@ -356,7 +370,7 @@ func Event(v model.WxMqMsgAnd) {
 }*/
 func (w *WxToken) GetAccessToken() (accessToken WxAccessToken, err error) {
 	k := w.MqAppID + constant.RedisKeyWxSnsAccessToken
-	e := ooredis.Ser.Ser.GetType(k, &accessToken)
+	e := oredis.Ser.GetType(k, &accessToken)
 	if e != nil || len(accessToken.AccessToken) < 20 {
 		accessToken, err = w.SetAccessToken(k)
 		if err != nil {
@@ -377,7 +391,7 @@ func (w *WxToken) GetAccessTokenStr() (token string, err error) {
 func (w *WxToken) GetJsApiGetTicket() (token string, err error) {
 	k := w.MqAppID + constant.RedisKeyWxJsApiGetTicket
 	accessToken := WxAccessToken{}
-	e := ooredis.Ser.Ser.GetType(k, &accessToken)
+	e := oredis.Ser.GetType(k, &accessToken)
 	if e != nil || len(accessToken.AccessToken) < 20 {
 		token, err = w.SetJsApiGetTicket(k)
 		if err != nil {

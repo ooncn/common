@@ -186,6 +186,23 @@ type SystemSetting struct {
 	Logo interface{}
 }
 
+type Obj string
+
+func (p Obj) Get() string {
+	return string(p)
+}
+func (p Obj) GetInt64() int64 {
+	i, _ := strconv.ParseInt(p.Get(), 10, 64)
+	return i
+}
+func (p Obj) GetInt() int {
+	return int(p.GetInt64())
+}
+func (p Obj) GetFloat64() float64 {
+	i, _ := strconv.ParseFloat(p.Get(), 64)
+	return i
+}
+
 type Map map[string]string
 
 func (m Map) New() {
